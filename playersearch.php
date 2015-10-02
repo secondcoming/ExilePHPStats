@@ -17,9 +17,15 @@ if ((!isset($_POST['searchfield']) || $_POST['searchfield'] == '') && !isset($_G
             
             <p style="width:100%;padding-top:5px;padding-bottom:5px">
                 <b>Search By:</b><br>
-				<select name="server">                 
-                  <option value="altis" selected>Altis</option>
-				  <option value="chernarus">Chernarus</option>
+				<select name="server">';
+
+	foreach ($ServerList as $ServerToCheck)
+    	{
+        	$ServerDetails = explode("|", $ServerToCheck);
+        	$servername = ucwords($ServerDetails[4]);
+		echo '<option value="'.$servername.'" selected>'.ucwords($servername).'</option>';
+    	}
+	echo '
                 </select>
                 <select name="searchtype">                 
                   <option value="name" selected>Name</option>
@@ -51,9 +57,14 @@ else
             
             <p style="width:100%;padding-top:5px;padding-bottom:5px">
                 <b>Search By:</b><br>
-				<select name="server">                 
-                  <option value="altis" selected>Altis</option>
-				  <option value="chernarus">Chernarus</option>
+		<select name="server">';                 
+	foreach ($ServerList as $ServerToCheck)
+    	{
+        	$ServerDetails = explode("|", $ServerToCheck);
+        	$servername = ucwords($ServerDetails[4]);
+		echo '<option value="'.$servername.'" selected>'.ucwords($servername).'</option>';
+    	}
+	echo '
                 </select>
                 <select name="searchtype">                 
                   <option value="name" selected>Name</option>
@@ -113,7 +124,7 @@ else
         $dbpass = $ServerDetails[3];
         $servername = ucwords($ServerDetails[4]);
 
-        if (strtolower($servername) == $Server)
+        if (strtolower($servername) == strtolower($Server))
         {
             $db_local = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname);
         }
@@ -360,14 +371,7 @@ else
                 $inGameCoords = substr($position_x, 0, 3) . substr($position_y, 0, 3);
                 $pin_code = $row2->pin_code;
                 $spawned_at = $row2->spawned_at;
-				if(!isset($row2->last_updated))
-				{
-					$last_updated = "n/a";
-				}
-				else
-				{
-					$last_updated = $row2->last_updated;
-				}       
+                $last_updated = $row2->last_updated;
                 $contents = "Items: " . $row2->cargo_items . "<hr>";
                 $contents .= "Magazines: " . $row2->cargo_magazines . "<hr>";
                 $contents .= "Weapons: " . $row2->cargo_weapons . "<hr>";
