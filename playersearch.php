@@ -6,6 +6,16 @@ include 'includes/header.php';
 include 'includes/config.php';
 include 'includes/functions.php';
 
+$ServerOptions = "";
+
+foreach ($ServerList as $ServerToCheck)
+{
+	$ServerDetails = explode("|", $ServerToCheck);
+	$servername = $ServerDetails[4];
+
+	$ServerOptions .= "<option value=\"$servername\" selected>$servername</option>\n";
+}
+
 if ((!isset($_POST['searchfield']) || $_POST['searchfield'] == '') && !isset($_GET['searchfield']))
 {
     echo '<div>
@@ -17,9 +27,8 @@ if ((!isset($_POST['searchfield']) || $_POST['searchfield'] == '') && !isset($_G
             
             <p style="width:100%;padding-top:5px;padding-bottom:5px">
                 <b>Search By:</b><br>
-				<select name="server">                 
-                  <option value="altis" selected>Altis</option>
-				  <option value="chernarus">Chernarus</option>
+				<select name="server">';                 
+                  echo $ServerOptions; echo '
                 </select>
                 <select name="searchtype">                 
                   <option value="name" selected>Name</option>
@@ -51,9 +60,8 @@ else
             
             <p style="width:100%;padding-top:5px;padding-bottom:5px">
                 <b>Search By:</b><br>
-				<select name="server">                 
-                  <option value="altis" selected>Altis</option>
-				  <option value="chernarus">Chernarus</option>
+				<select name="server">';                 
+                  echo $ServerOptions; echo '
                 </select>
                 <select name="searchtype">                 
                   <option value="name" selected>Name</option>
