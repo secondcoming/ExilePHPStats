@@ -1,7 +1,7 @@
 <?php
 
 $PageTitle = "Exile Player Search:";
-$path = __DIR__;
+$path = dirname($_SERVER['PHP_SELF']);
 include 'includes/header.php';
 include 'includes/config.php';
 include 'includes/functions.php';
