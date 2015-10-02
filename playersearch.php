@@ -17,14 +17,9 @@ if ((!isset($_POST['searchfield']) || $_POST['searchfield'] == '') && !isset($_G
             
             <p style="width:100%;padding-top:5px;padding-bottom:5px">
                 <b>Search By:</b><br>
-				<select name="server">';
-	foreach ($ServerList as $ServerToCheck)
-    	{
-        	$ServerDetails = explode("|", $ServerToCheck);
-        	$servername = ucwords($ServerDetails[4]);
-		echo '<option value="'.$servername.'" selected>'.ucwords($servername).'</option>';
-    	}
-	echo '
+				<select name="server">                 
+                  <option value="altis" selected>Altis</option>
+				  <option value="chernarus">Chernarus</option>
                 </select>
                 <select name="searchtype">                 
                   <option value="name" selected>Name</option>
@@ -56,14 +51,9 @@ else
             
             <p style="width:100%;padding-top:5px;padding-bottom:5px">
                 <b>Search By:</b><br>
-				<select name="server">';
-	foreach ($ServerList as $ServerToCheck)
-    	{
-        	$ServerDetails = explode("|", $ServerToCheck);
-        	$servername = ucwords($ServerDetails[4]);
-		echo '<option value="'.$servername.'" selected>'.ucwords($servername).'</option>';
-    	}
-	echo '
+				<select name="server">                 
+                  <option value="altis" selected>Altis</option>
+				  <option value="chernarus">Chernarus</option>
                 </select>
                 <select name="searchtype">                 
                   <option value="name" selected>Name</option>
@@ -123,35 +113,33 @@ else
         $dbpass = $ServerDetails[3];
         $servername = ucwords($ServerDetails[4]);
 
-        if (strtolower($servername) == $Server)
+        if (strtolower($servername) == strtolower($Server))
         {
             $db_local = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname);
         }
     }
 
     $result = mysqli_query($db_local, $sql);
-    $align1 = ' align=right style="padding:8px;" ';
+    $align1 = ' align=left style="padding:8px;" ';
 
-    echo '<hr><h2>Results for: ' . $SearchType . ' = "' . $Searchfield . '" on Server: '.ucwords($Server).'</h2><hr><table border="1" cellspacing=1 width=100%>';
-    echo "<tr>
-					<td width=150 $align1>steam64id</td>
-					<td width=150 $align1>name</td>
-					<td width=150 $align1>pop&nbsp;tabs</td>
-					<td width=150 $align1>Respect</td>
-					<td width=150 $align1>Kills</td>
-					<td width=150 $align1>Deaths</td>
-					<td width=150 $align1>First&nbsp;Connected</td>
-					<td width=150 $align1>Last&nbsp;Connected</td>
-					<td width=150 $align1>Last&nbsp;Disconnect</td>
-					<td width=150 $align1>Connections</td>
-				</tr>";
-
+    echo '	<hr><h2>Results for: ' . $SearchType . ' = "' . $Searchfield . '" on Server: '.ucwords($Server).'</h2><hr>';
 
     while ($row = mysqli_fetch_object($result))
     {
         if (isset($row->uid) && $row->uid <> '')
         {
-
+			echo "<table border=\"1\" cellspacing=1 width=100%><tr>
+					<td width=200 $align1>steam64id</td>
+					<td width=250 $align1>name</td>
+					<td width=75 $align1>pop&nbsp;tabs</td>
+					<td width=75 $align1>Respect</td>
+					<td width=75 $align1>Kills</td>
+					<td width=75 $align1>Deaths</td>
+					<td width=120 $align1>First&nbsp;Connected</td>
+					<td width=120 $align1>Last&nbsp;Connected</td>
+					<td width=120 $align1>Last&nbsp;Disconnect</td>
+					<td width=120 $align1>Connections</td>
+				</tr>";
             // Display Account
             $uid = $row->uid;
             $steam64id = '<a href="http://steamcommunity.com/profiles/' . $uid . '" target=_blank>' . $uid . '</a> ';
@@ -162,20 +150,28 @@ else
             $deaths = $row->deaths;
             $first_connect_at = $row->first_connect_at;
             $last_connect_at = $row->last_connect_at;
-            $last_disconnect_at = $row->last_disconnect_at;
+			if(isset($row->last_disconnect_at))
+			{
+				$last_disconnect_at = $row->last_disconnect_at;
+			}
+			else
+			{
+				$last_disconnect_at = '0000-00-00 00:00:00';
+			}
+            
             $total_connections = $row->total_connections;
 
-            echo "<tr>
-			<td width=150 $align1>$steam64id</td>
-			<td width=150 $align1>$name</td>
-			<td width=150 $align1>$poptabs</td>
-			<td width=150 $align1>$respect</td>
-			<td width=150 $align1>$kills</td>
-			<td width=150 $align1>$deaths</td>
-			<td width=250 $align1>$first_connect_at</td>
-			<td width=250 $align1>$last_connect_at</td>
-			<td width=250 $align1>$last_disconnect_at</td>
-			<td width=150 $align1>$total_connections</td>
+            echo "<tr style=\"background-color:#000;\">
+			<td $align1>$steam64id</td>
+			<td $align1>$name</td>
+			<td $align1>$poptabs</td>
+			<td $align1>$respect</td>
+			<td $align1>$kills</td>
+			<td $align1>$deaths</td>
+			<td $align1>$first_connect_at</td>
+			<td $align1>$last_connect_at</td>
+			<td $align1>$last_disconnect_at</td>
+			<td $align1>$total_connections</td>
 			</tr></table>";
 
             // Display associated territories	
@@ -191,7 +187,7 @@ else
 
             if (mysqli_num_rows($result3) > 0)
             {
-                echo "<hr><h2>Territories for $name</h2><hr>";
+                echo "<hr><h2>Territories for $name</h2><hr><a href=\"export.php?uid=$uid&server=$Server\" target=_blank>Export Player Territories and Constructions</a><hr>";
                 echo '
 				<table class="tftable" border="1"">
 				<tr>
@@ -208,7 +204,7 @@ else
             }
             else
             {
-                echo "<hr><h2>This player has no territories</h2><hr>";
+                //echo "<hr><h2>This player has no territories</h2><hr>";
             }
 
 
@@ -307,7 +303,7 @@ else
             }
             else
             {
-                echo "<hr><h2>This player has no containers</h2><hr>";
+                //echo "<hr><h2>This player has no containers</h2><hr>";
             }
 
             while ($row2 = mysqli_fetch_object($result2))
@@ -357,7 +353,7 @@ else
             }
             else
             {
-                echo "<hr><h2>This player has no vehicles</h2><hr>";
+                //echo "<hr><h2>This player has no vehicles</h2><hr>";
             }
 
             while ($row2 = mysqli_fetch_object($result2))
