@@ -18,7 +18,6 @@ if ((!isset($_POST['searchfield']) || $_POST['searchfield'] == '') && !isset($_G
             <p style="width:100%;padding-top:5px;padding-bottom:5px">
                 <b>Search By:</b><br>
 				<select name="server">';
-
 	foreach ($ServerList as $ServerToCheck)
     	{
         	$ServerDetails = explode("|", $ServerToCheck);
@@ -57,7 +56,7 @@ else
             
             <p style="width:100%;padding-top:5px;padding-bottom:5px">
                 <b>Search By:</b><br>
-		<select name="server">';                 
+				<select name="server">';
 	foreach ($ServerList as $ServerToCheck)
     	{
         	$ServerDetails = explode("|", $ServerToCheck);
@@ -124,7 +123,7 @@ else
         $dbpass = $ServerDetails[3];
         $servername = ucwords($ServerDetails[4]);
 
-        if (strtolower($servername) == strtolower($Server))
+        if (strtolower($servername) == $Server)
         {
             $db_local = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname);
         }
@@ -371,7 +370,14 @@ else
                 $inGameCoords = substr($position_x, 0, 3) . substr($position_y, 0, 3);
                 $pin_code = $row2->pin_code;
                 $spawned_at = $row2->spawned_at;
-                $last_updated = $row2->last_updated;
+				if(!isset($row2->last_updated))
+				{
+					$last_updated = "n/a";
+				}
+				else
+				{
+					$last_updated = $row2->last_updated;
+				}       
                 $contents = "Items: " . $row2->cargo_items . "<hr>";
                 $contents .= "Magazines: " . $row2->cargo_magazines . "<hr>";
                 $contents .= "Weapons: " . $row2->cargo_weapons . "<hr>";
