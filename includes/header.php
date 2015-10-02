@@ -15,7 +15,8 @@ header ('Content-type: text/html; charset=utf-8');
         <meta name="robots" content="noindex,nofollow" />
         <meta name="googlebot" content="noindex,nofollow" />        
         <link rel="stylesheet" type="text/css" href="style.css">
-		<script type="text/javascript" src="includes/load_js.js"></script>
+	<script type="text/javascript" src="includes/js/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="includes/js/simple-expand.js"></script>
     </head>
     <body>
 
