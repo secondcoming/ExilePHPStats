@@ -1,0 +1,1 @@
+<?php// array of servers ['host|dbname|db user|db pass|servername']$ServerList = array('192.168.0.1|exile|dbuser|dbuser|altis','192.168.0.2|exile|dbuser|dbuser|chernarus'); ?>
