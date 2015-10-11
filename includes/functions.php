@@ -1,11 +1,11 @@
 <?php
 
-function displayServerDetails($serverIP, $serverDB, $serverUser, $serverPass, $ServerName)
+function displayServerDetails($serverIP, $serverDB, $serverUser, $serverPass, $ServerName, $ServerPort)
 {
 
     // Database Connection Setup
     // -------------------------------------------------------
-    $db_local = mysqli_connect($serverIP, $serverUser, $serverPass, $serverDB);
+    $db_local = mysqli_connect($serverIP, $serverUser, $serverPass, $serverDB, $ServerPort);
     echo '<div style="width:100%;text-align:left;margin-left:10px;"><h2>'.$ServerName.' Server:</h2></div>';
 
     // Server Stats
