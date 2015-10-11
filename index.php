@@ -13,9 +13,10 @@ foreach ($ServerList as $Server)
 	$dbname = $ServerDetails[1];
 	$dbuser = $ServerDetails[2];
 	$dbpass = $ServerDetails[3];
-	$servername = ucwords($ServerDetails[4]);		
+	$servername = ucwords($ServerDetails[4]);
+	$dbport = $ServerDetails[5];
 
-	displayServerDetails($dbhost,$dbname,$dbuser,$dbpass,$servername);
+	displayServerDetails($dbhost,$dbname,$dbuser,$dbpass,$servername,$dbport);
 	
 }
 
