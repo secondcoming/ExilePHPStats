@@ -5,7 +5,7 @@ header ('Content-type: text/html; charset=utf-8');
 ?>
 <html>
     <head>
-        <title><? echo $PageTitle; ?>:</title>
+        <title><?php echo $PageTitle; ?>:</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta charset="UTF-8">
         <meta http-equiv="Pragma" CONTENT="no-cache">
