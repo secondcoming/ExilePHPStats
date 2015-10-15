@@ -10,10 +10,10 @@ $ServerOptions = "";
 
 foreach ($ServerList as $ServerToCheck)
 {
-	$ServerDetails = explode("|", $ServerToCheck);
-	$servername = $ServerDetails[4];
+    $ServerDetails = explode("|", $ServerToCheck);
+    $servername = $ServerDetails[4];
 
-	$ServerOptions .= "<option value=\"$servername\" selected>$servername</option>\n";
+    $ServerOptions .= "<option value=\"$servername\" selected>$servername</option>\n";
 }
 
 if ((!isset($_POST['searchfield']) || $_POST['searchfield'] == '') && !isset($_GET['searchfield']))
@@ -27,8 +27,9 @@ if ((!isset($_POST['searchfield']) || $_POST['searchfield'] == '') && !isset($_G
             
             <p style="width:100%;padding-top:5px;padding-bottom:5px">
                 <b>Search By:</b><br>
-				<select name="server">';                 
-                  echo $ServerOptions; echo '
+				<select name="server">';
+    echo $ServerOptions;
+    echo '
                 </select>
                 <select name="searchtype">                 
                   <option value="name" selected>Name</option>
@@ -37,7 +38,7 @@ if ((!isset($_POST['searchfield']) || $_POST['searchfield'] == '') && !isset($_G
                 <input type="text" name="searchfield" size=45 id="textfield"></input>
                 <input type="hidden" name="submitok" value="true">
                 <input type="submit">
-                <a href="'.$path.'/playersearch.php" style="color:#fff;">Reset</a>
+                <a href="' . $path . '/playersearch.php" style="color:#fff;">Reset</a>
             </p>
         </form>
 
@@ -60,8 +61,9 @@ else
             
             <p style="width:100%;padding-top:5px;padding-bottom:5px">
                 <b>Search By:</b><br>
-				<select name="server">';                 
-                  echo $ServerOptions; echo '
+				<select name="server">';
+    echo $ServerOptions;
+    echo '
                 </select>
                 <select name="searchtype">                 
                   <option value="name" selected>Name</option>
@@ -99,15 +101,15 @@ else
     if ($SearchType == 'name')
     {
         $Searchfield = strtolower($Searchfield);
-		if($UseAccountLog == TRUE)
-		{
-			$sql = "SELECT * FROM account LEFT JOIN account_log ON account_log.uid = account.uid WHERE (LOWER(account_log.name) LIKE '%$Searchfield%' OR LOWER(account_log.old_name) LIKE '%$Searchfield%' OR LOWER(account.name) LIKE '%$Searchfield%')";
-		}
-		else
-		{			
-			$sql = "SELECT * FROM account WHERE LOWER(account.name) LIKE '%$Searchfield%'";
-		}
-			
+
+        if ($UseAccountLog == TRUE)
+        {
+            $sql = "SELECT account.uid,account.name, account.money, account.score, account.kills,account. deaths, account.first_connect_at,account.last_connect_at, account.last_disconnect_at, account.total_connections,account_log.id FROM account LEFT JOIN account_log ON account_log.uid = account.uid WHERE LOWER(account_log.name) LIKE '%$Searchfield%' OR LOWER(account_log.old_name) LIKE '%$Searchfield%' OR LOWER(account.name) LIKE '%$Searchfield%'";
+        }
+        else
+        {
+            $sql = "SELECT * FROM account WHERE LOWER(account.name) LIKE '%$Searchfield%'";
+        }
     }
     elseif ($SearchType == 'uid')
     {
@@ -128,34 +130,36 @@ else
         $dbuser = $ServerDetails[2];
         $dbpass = $ServerDetails[3];
         $servername = ucwords($ServerDetails[4]);
+        $dbport = $ServerDetails[5];
 
         if (strtolower($servername) == strtolower($Server))
         {
-            $db_local = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname);
+            $db_local = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname, $dbport);
         }
     }
 
     $result = mysqli_query($db_local, $sql);
     $align1 = ' align=left style="padding:8px;" ';
 
-    echo '	<hr><h2>Results for: ' . $SearchType . ' = "' . $Searchfield . '" on Server: '.ucwords($Server).'</h2><hr>';
+    echo '	<hr><h2>Results for: ' . $SearchType . ' = "' . $Searchfield . '" on Server: ' . ucwords($Server) . '</h2><hr>';
+
 
     while ($row = mysqli_fetch_object($result))
     {
         if (isset($row->uid) && $row->uid <> '')
         {
-			echo "<table border=\"1\" cellspacing=1 width=100%><tr>
-					<td width=200 $align1>steam64id</td>
-					<td width=250 $align1>name</td>
-					<td width=75 $align1>pop&nbsp;tabs</td>
-					<td width=75 $align1>Respect</td>
-					<td width=75 $align1>Kills</td>
-					<td width=75 $align1>Deaths</td>
-					<td width=120 $align1>First&nbsp;Connected</td>
-					<td width=120 $align1>Last&nbsp;Connected</td>
-					<td width=120 $align1>Last&nbsp;Disconnect</td>
-					<td width=120 $align1>Connections</td>
-				</tr>";
+            echo "<table border=\"1\" cellspacing=1 width=100%><tr>
+						<td width=200 $align1>steam64id</td>
+						<td width=250 $align1>name</td>
+						<td width=75 $align1>pop&nbsp;tabs</td>
+						<td width=75 $align1>Respect</td>
+						<td width=75 $align1>Kills</td>
+						<td width=75 $align1>Deaths</td>
+						<td width=120 $align1>First&nbsp;Connected</td>
+						<td width=120 $align1>Last&nbsp;Connected</td>
+						<td width=120 $align1>Last&nbsp;Disconnect</td>
+						<td width=120 $align1>Connections</td>
+                    </tr>";
             // Display Account
             $uid = $row->uid;
             $steam64id = '<a href="http://steamcommunity.com/profiles/' . $uid . '" target=_blank>' . $uid . '</a> ';
@@ -166,15 +170,16 @@ else
             $deaths = $row->deaths;
             $first_connect_at = $row->first_connect_at;
             $last_connect_at = $row->last_connect_at;
-			if(isset($row->last_disconnect_at))
-			{
-				$last_disconnect_at = $row->last_disconnect_at;
-			}
-			else
-			{
-				$last_disconnect_at = '0000-00-00 00:00:00';
-			}
-            
+
+            if (isset($row->last_disconnect_at))
+            {
+                $last_disconnect_at = $row->last_disconnect_at;
+            }
+            else
+            {
+                $last_disconnect_at = '0000-00-00 00:00:00';
+            }
+
             $total_connections = $row->total_connections;
 
             echo "<tr style=\"background-color:#000;\">
@@ -190,16 +195,16 @@ else
 			<td $align1>$total_connections</td>
 			</tr></table>";
 
-			if($UseAccountLog == TRUE)
-			{
-				$sql3 = "SELECT * FROM account_log WHERE uid = '$uid' ORDER BY connected DESC";
-				$result3 = mysqli_query($db_local, $sql3);
-					
-					
-				if (mysqli_num_rows($result3) > 0)
-				{
-					echo "<hr><h2>Account log for $name</h2><hr>";
-					echo "<table border=\"1\" cellspacing=1 width=100%><tr>
+            if ($UseAccountLog == TRUE && $row->id != '')
+            {
+                $sql3 = "SELECT * FROM account_log WHERE uid = '$uid' ORDER BY connected DESC";
+                $result3 = mysqli_query($db_local, $sql3);
+
+
+                if (mysqli_num_rows($result3) > 0)
+                {
+                    echo "<hr><h2>Account log for $name</h2><hr>";
+                    echo "<table border=\"1\" cellspacing=1 width=100%><tr>
 							<td width=200 $align1>steam64id</td>
 							<td width=250 $align1>new&nbsp;name</td>
 							<td width=250 $align1>old&nbsp;name</td>
@@ -207,36 +212,32 @@ else
 							<td width=75 $align1>Respect</td>
 							<td width=120 $align1>Name&nbsp;Changed</td>
 						</tr>";
-					while ($row3 = mysqli_fetch_object($result3))
-					{
-						$steam64id_old = '<a href="http://steamcommunity.com/profiles/' . $uid . '" target=_blank>' . $uid . '</a> ';
-						$name_new = $row->name;
-						$name_old = $row->old_name;
-						$poptabs_old = $row->money;
-						$respect_old = $row->score;
-						$name_changed_at = $row->connected;
-						
-						echo "<tr style=\"background-color:#000;\">
+                    while ($row3 = mysqli_fetch_object($result3))
+                    {
+                        $steam64id_old = '<a href="http://steamcommunity.com/profiles/' . $uid . '" target=_blank>' . $uid . '</a> ';
+                        $name_new = $row3->name;
+                        $name_old = $row3->old_name;
+                        $poptabs_old = $row3->money;
+                        $respect_old = $row3->score;
+                        $name_changed_at = $row3->connected;
+
+                        echo "<tr style=\"background-color:#000;\">
 								<td $align1>$steam64id_old</td>
 								<td $align1>$name_new</td>
 								<td $align1>$name_old</td>
 								<td $align1>$poptabs_old</td>
 								<td $align1>$respect_old</td>
 								<td $align1>$name_changed_at</td>
-							</tr>";						
-						
-					}
-					echo "</table>";
-				}
-				else
-				{
-					echo "<hr><h2>This player has no name history</h2><hr>";
-				}					
-					
-					
-					
-			}
-			
+							</tr>";
+                    }
+                    echo "</table>";
+                }
+                else
+                {
+                    echo "<hr><h2>This player has no name history</h2><hr>";
+                }
+            }
+
             // Display associated territories	
             $sql3 = "SELECT territory.name, territory.position_x, territory.position_y, territory.radius, territory.level,
 					account.name as owner_name, account.uid, territory.build_rights, territory.moderators, territory.created_at, territory.last_payed_at 
@@ -429,14 +430,14 @@ else
                 $inGameCoords = substr($position_x, 0, 3) . substr($position_y, 0, 3);
                 $pin_code = $row2->pin_code;
                 $spawned_at = $row2->spawned_at;
-				if(!isset($row2->last_updated))
-				{
-					$last_updated = "n/a";
-				}
-				else
-				{
-					$last_updated = $row2->last_updated;
-				}       
+                if (!isset($row2->last_updated))
+                {
+                    $last_updated = "n/a";
+                }
+                else
+                {
+                    $last_updated = $row2->last_updated;
+                }
                 $contents = "Items: " . $row2->cargo_items . "<hr>";
                 $contents .= "Magazines: " . $row2->cargo_magazines . "<hr>";
                 $contents .= "Weapons: " . $row2->cargo_weapons . "<hr>";
@@ -453,7 +454,7 @@ else
         }
         else
         {
-            echo "<hr><h1>Invalid. reset the form to continue</h1><hr>";
+            echo "<hr><h1>Invalid. reset the form to continue</h1>$sql<hr>";
         }
     }
 }
