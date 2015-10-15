@@ -149,16 +149,16 @@ else
         if (isset($row->uid) && $row->uid <> '')
         {
             echo "<table border=\"1\" cellspacing=1 width=100%><tr>
-						<td width=200 $align1>steam64id</td>
-						<td width=250 $align1>name</td>
-						<td width=75 $align1>pop&nbsp;tabs</td>
-						<td width=75 $align1>Respect</td>
-						<td width=75 $align1>Kills</td>
-						<td width=75 $align1>Deaths</td>
-						<td width=120 $align1>First&nbsp;Connected</td>
-						<td width=120 $align1>Last&nbsp;Connected</td>
-						<td width=120 $align1>Last&nbsp;Disconnect</td>
-						<td width=120 $align1>Connections</td>
+                            <td width=200 $align1>steam64id</td>
+                            <td width=250 $align1>name</td>
+                            <td width=75 $align1>pop&nbsp;tabs</td>
+                            <td width=75 $align1>Respect</td>
+                            <td width=75 $align1>Kills</td>
+                            <td width=75 $align1>Deaths</td>
+                            <td width=120 $align1>First&nbsp;Connected</td>
+                            <td width=120 $align1>Last&nbsp;Connected</td>
+                            <td width=120 $align1>Last&nbsp;Disconnect</td>
+                            <td width=120 $align1>Connections</td>
                     </tr>";
             // Display Account
             $uid = $row->uid;
@@ -195,7 +195,7 @@ else
 			<td $align1>$total_connections</td>
 			</tr></table>";
 
-            if ($UseAccountLog == TRUE && $row->id != '')
+            if ($UseAccountLog == TRUE && isset($row->id) && $row->id != '')
             {
                 $sql3 = "SELECT * FROM account_log WHERE uid = '$uid' ORDER BY connected DESC";
                 $result3 = mysqli_query($db_local, $sql3);
