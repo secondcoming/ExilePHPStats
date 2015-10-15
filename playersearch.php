@@ -99,7 +99,15 @@ else
     if ($SearchType == 'name')
     {
         $Searchfield = strtolower($Searchfield);
-        $sql = "SELECT * FROM account WHERE LOWER(name) LIKE '%$Searchfield%'";
+		if($UseAccountLog == TRUE)
+		{
+			$sql = "SELECT * FROM account LEFT JOIN account_log ON account_log.uid = account.uid WHERE (LOWER(account_log.name) LIKE '%$Searchfield%' OR LOWER(account_log.old_name) LIKE '%$Searchfield%' OR LOWER(account.name) LIKE '%$Searchfield%')";
+		}
+		else
+		{			
+			$sql = "SELECT * FROM account WHERE LOWER(account.name) LIKE '%$Searchfield%'";
+		}
+			
     }
     elseif ($SearchType == 'uid')
     {
@@ -182,6 +190,53 @@ else
 			<td $align1>$total_connections</td>
 			</tr></table>";
 
+			if($UseAccountLog == TRUE)
+			{
+				$sql3 = "SELECT * FROM account_log WHERE uid = '$uid' ORDER BY connected DESC";
+				$result3 = mysqli_query($db_local, $sql3);
+					
+					
+				if (mysqli_num_rows($result3) > 0)
+				{
+					echo "<hr><h2>Account log for $name</h2><hr>";
+					echo "<table border=\"1\" cellspacing=1 width=100%><tr>
+							<td width=200 $align1>steam64id</td>
+							<td width=250 $align1>new&nbsp;name</td>
+							<td width=250 $align1>old&nbsp;name</td>
+							<td width=75 $align1>pop&nbsp;tabs</td>
+							<td width=75 $align1>Respect</td>
+							<td width=120 $align1>Name&nbsp;Changed</td>
+						</tr>";
+					while ($row3 = mysqli_fetch_object($result3))
+					{
+						$steam64id_old = '<a href="http://steamcommunity.com/profiles/' . $uid . '" target=_blank>' . $uid . '</a> ';
+						$name_new = $row->name;
+						$name_old = $row->old_name;
+						$poptabs_old = $row->money;
+						$respect_old = $row->score;
+						$name_changed_at = $row->connected;
+						
+						echo "<tr style=\"background-color:#000;\">
+								<td $align1>$steam64id_old</td>
+								<td $align1>$name_new</td>
+								<td $align1>$name_old</td>
+								<td $align1>$poptabs_old</td>
+								<td $align1>$respect_old</td>
+								<td $align1>$name_changed_at</td>
+							</tr>";						
+						
+					}
+					echo "</table>";
+				}
+				else
+				{
+					echo "<hr><h2>This player has no name history</h2><hr>";
+				}					
+					
+					
+					
+			}
+			
             // Display associated territories	
             $sql3 = "SELECT territory.name, territory.position_x, territory.position_y, territory.radius, territory.level,
 					account.name as owner_name, account.uid, territory.build_rights, territory.moderators, territory.created_at, territory.last_payed_at 
