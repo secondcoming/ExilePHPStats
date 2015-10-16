@@ -159,6 +159,7 @@ else
                             <td width=120 $align1>Last&nbsp;Connected</td>
                             <td width=120 $align1>Last&nbsp;Disconnect</td>
                             <td width=120 $align1>Connections</td>
+							<td width=120 $align1></td>
                     </tr>";
             // Display Account
             $uid = $row->uid;
@@ -181,6 +182,19 @@ else
             }
 
             $total_connections = $row->total_connections;
+			
+			// does the account have a currently alive character
+			$sql3 = "SELECT * FROM player WHERE account_uid = '$uid'";
+			$result3 = mysqli_query($db_local, $sql3);
+
+			if (mysqli_num_rows($result3) > 0)
+            {
+				$options = "<a href=\"playeredit.php?action=edit&uid=$uid&server=$Server\"><img src=\"images\edit.png\" title=\"edit pop tabs and respect\"></a> <a href=\"playeredit.php?action=delete&uid=$uid&server=$Server\"><img src=\"images\delete.png\" title=\"delete the character\"></a>";
+			}
+			else
+			{
+				$options = "<a href=\"playeredit.php?action=edit&uid=$uid&server=$Server\"><img src=\"images\edit.png\" title=\"edit pop tabs and respect\"></a>";
+			}
 
             echo "<tr style=\"background-color:#000;\">
 			<td $align1>$steam64id</td>
@@ -193,6 +207,7 @@ else
 			<td $align1>$last_connect_at</td>
 			<td $align1>$last_disconnect_at</td>
 			<td $align1>$total_connections</td>
+			<td style=\"width:200px;text-align:left;padding:8px;\">$options</td>
 			</tr></table>";
 
             if ($UseAccountLog == TRUE && isset($row->id) && $row->id != '')
