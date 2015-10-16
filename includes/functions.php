@@ -232,4 +232,14 @@ function clean_input($input)
     $input = addslashes($input);
     return $input;
 }
+
+function redirect($message, $url)
+{
+
+    echo "<h2>$message</h2>";
+
+    header("Refresh:2;url=$url");
+}
+
+
 ?>
