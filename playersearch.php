@@ -104,11 +104,11 @@ else
 
         if ($UseAccountLog == TRUE)
         {
-            $sql = "SELECT account.uid,account.name, account.money, account.score, account.kills,account. deaths, account.first_connect_at,account.last_connect_at, account.last_disconnect_at, account.total_connections,account_log.id FROM account LEFT JOIN account_log ON account_log.uid = account.uid WHERE LOWER(account_log.name) LIKE '%$Searchfield%' OR LOWER(account_log.old_name) LIKE '%$Searchfield%' OR LOWER(account.name) LIKE '%$Searchfield%'";
+            $sql = "SELECT account.uid,account.name, account.money, account.score, account.kills,account. deaths, account.first_connect_at,account.last_connect_at, account.last_disconnect_at, account.total_connections,account_log.id FROM account LEFT JOIN account_log ON account_log.uid = account.uid WHERE LOWER(account_log.name) LIKE '%$Searchfield%' OR LOWER(account_log.old_name) LIKE '%$Searchfield%' OR LOWER(account.name) LIKE '%$Searchfield%' ORDER BY name";
         }
         else
         {
-            $sql = "SELECT * FROM account WHERE LOWER(account.name) LIKE '%$Searchfield%'";
+            $sql = "SELECT * FROM account WHERE LOWER(account.name) LIKE '%$Searchfield%' ORDER BY name";
         }
     }
     elseif ($SearchType == 'uid')
@@ -139,7 +139,7 @@ else
     }
 
     $result = mysqli_query($db_local, $sql);
-    $align1 = ' align=left style="padding:8px;" ';
+    $align1 = ' align=left style="padding:8px;font-size:11px;" ';
 
     echo '	<hr><h2>Results for: ' . $SearchType . ' = "' . $Searchfield . '" on Server: ' . ucwords($Server) . '</h2><hr>';
 
@@ -148,8 +148,8 @@ else
     {
         if (isset($row->uid) && $row->uid <> '')
         {
-            echo "<table border=\"1\" cellspacing=1 width=100%><tr>
-                            <td width=200 $align1>steam64id</td>
+            echo "<table cellspacing=1 width=100%><tr>
+                            <td width=150 $align1>steam64id</td>
                             <td width=250 $align1>name</td>
                             <td width=75 $align1>pop&nbsp;tabs</td>
                             <td width=75 $align1>Respect</td>
@@ -159,7 +159,7 @@ else
                             <td width=120 $align1>Last&nbsp;Connected</td>
                             <td width=120 $align1>Last&nbsp;Disconnect</td>
                             <td width=120 $align1>Connections</td>
-							<td width=120 $align1></td>
+							<td width=85 $align1></td>
                     </tr>";
             // Display Account
             $uid = $row->uid;
@@ -184,10 +184,10 @@ else
             $total_connections = $row->total_connections;
 			
 			// does the account have a currently alive character
-			$sql3 = "SELECT * FROM player WHERE account_uid = '$uid'";
-			$result3 = mysqli_query($db_local, $sql3);
+			$sql4 = "SELECT * FROM player WHERE account_uid = '$uid'";
+			$result4 = mysqli_query($db_local, $sql4);
 
-			if (mysqli_num_rows($result3) > 0)
+			if (mysqli_num_rows($result4) > 0)
             {
 				$options = "<a href=\"playeredit.php?action=edit&uid=$uid&server=$Server\"><img src=\"images\edit.png\" title=\"edit pop tabs and respect\"></a> <a href=\"playeredit.php?action=delete&uid=$uid&server=$Server\"><img src=\"images\delete.png\" title=\"delete the character\"></a>";
 			}
@@ -210,7 +210,7 @@ else
 			<td style=\"width:200px;text-align:left;padding:8px;\">$options</td>
 			</tr></table>";
 
-            if ($UseAccountLog == TRUE && isset($row->id) && $row->id != '')
+            if ($UseAccountLog && isset($row->id) && $row->id != '')
             {
                 $sql3 = "SELECT * FROM account_log WHERE uid = '$uid' ORDER BY connected DESC";
                 $result3 = mysqli_query($db_local, $sql3);
@@ -219,7 +219,7 @@ else
                 if (mysqli_num_rows($result3) > 0)
                 {
                     echo "<hr><h2>Account log for $name</h2><hr>";
-                    echo "<table border=\"1\" cellspacing=1 width=100%><tr>
+                    echo "<table cellspacing=1 width=100%><tr>
 							<td width=200 $align1>steam64id</td>
 							<td width=250 $align1>new&nbsp;name</td>
 							<td width=250 $align1>old&nbsp;name</td>
@@ -253,12 +253,13 @@ else
                 }
             }
 
+
             // Display associated territories	
             $sql3 = "SELECT territory.name, territory.position_x, territory.position_y, territory.radius, territory.level,
 					account.name as owner_name, account.uid, territory.build_rights, territory.moderators, territory.created_at, territory.last_payed_at 
 
 					FROM territory, account 
-					WHERE territory.owner_uid = account.uid 
+					WHERE (territory.owner_uid = account.uid OR territory.build_rights LIKE '%$uid%' OR territory.moderators LIKE '%$uid%')
 					AND account.uid = '$uid'
 					ORDER BY territory.name";
             $result3 = mysqli_query($db_local, $sql3);
@@ -268,7 +269,7 @@ else
             {
                 echo "<hr><h2>Territories for $name</h2><hr><a href=\"export.php?uid=$uid&server=$Server\" target=_blank>Export Player Territories and Constructions</a><hr>";
                 echo '
-				<table class="tftable" border="1"">
+				<table class="tftable">
 				<tr>
 				<td style="width:300px;">TerritoryName</td>'
                 . '<td>Coords</td>'
