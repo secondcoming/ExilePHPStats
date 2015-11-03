@@ -73,7 +73,7 @@
 				$territoryY = $position_y;
 				$territoryRadius = $radius;
 				
-				$Records .= " ('$owner_uid', '$name', $position_x, $position_y, $position_z, $radius, $level, '$flag_texture', $flag_stolen, '$flag_stolen_by_uid', $flag_stolen_at, '$flag_steal_message', '$created_at', '$last_payed_at', '$build_rights', '$moderators'),";
+				$Records .= " ('$owner_uid', '$name', $position_x, $position_y, $position_z, $radius, $level, '$flag_texture', $flag_stolen, '$flag_stolen_by_uid', $flag_stolen_at, '$flag_steal_message', '$created_at', now(), '$build_rights', '$moderators'),";
 			}
 			$Records = rtrim($Records, ",");
 			$Records .= ";<br><br>";
@@ -87,7 +87,8 @@
 		// Export the constructions
 		$sql2 = "SELECT * FROM construction";
 		$result2 = mysqli_query($db_local, $sql2);
-		if(mysqli_num_rows($result) <> 0) // Found a record
+		$constructionCount = 0;
+		if(mysqli_num_rows($result2) <> 0) // Found a record
 		{		
 			$Records = "INSERT INTO construction (class, account_uid, spawned_at, maintained_at, position_x, position_y, position_z, direction_x, direction_y, direction_z, up_x, up_y, up_z, is_locked, pin_code) VALUES ";
 		
@@ -111,7 +112,8 @@
 				
 				if ((($position_x-$territoryX)**2 + ($position_y-$territoryY)**2 <= $territoryRadius**2))
 				{
-					$Records .= " ('$class', '$account_uid', '$spawned_at', '$maintained_at', $position_x, $position_y, $position_z, $direction_x, $direction_y, $direction_z, $up_x, $up_y, $up_z, $is_locked, '$pin_code'),";
+					$Records .= " ('$class', '$account_uid', '$spawned_at', now(), $position_x, $position_y, $position_z, $direction_x, $direction_y, $direction_z, $up_x, $up_y, $up_z, $is_locked, '$pin_code'),<br>";
+					$constructionCount = $constructionCount + 1;
 				}				
 				
 				
@@ -119,6 +121,7 @@
 			$Records = rtrim($Records, ",");
 			$Records .= ";";
 			echo $Records;
+			echo "<hr>$constructionCount constructions<hr>";
 			
 			
 
