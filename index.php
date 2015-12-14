@@ -1,11 +1,9 @@
 <?php
-
 $PageTitle = "Exile Server Stats:";
 $path = dirname($_SERVER['PHP_SELF']);
 include 'includes/header.php';
 include 'includes/config.php';
 include 'includes/functions.php';
-
 foreach ($ServerList as $Server)
 {
 	$ServerDetails = explode("|",$Server);
@@ -15,11 +13,9 @@ foreach ($ServerList as $Server)
 	$dbpass = $ServerDetails[3];
 	$servername = ucwords($ServerDetails[4]);
 	$dbport = $ServerDetails[5];
-
 	displayServerDetails($dbhost,$dbname,$dbuser,$dbpass,$servername,$dbport);
 	
 }
-
 ?>
 
 <script type="text/javascript">

@@ -155,7 +155,7 @@ if ((isset($_GET['action']) && isset($_GET['uid']) && isset($_GET['server'])) ||
 }
 else
 {
-	echo "<h1>ERROR</h1>";
+	echo "<h1>ERROR1</h1>";
 	
 }
 include 'includes/footer.php';

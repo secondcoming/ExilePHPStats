@@ -256,7 +256,7 @@ else
 
             // Display associated territories	
             $sql3 = "SELECT territory.name, territory.position_x, territory.position_y, territory.radius, territory.level,
-					account.name as owner_name, account.uid, territory.build_rights, territory.moderators, territory.created_at, territory.last_payed_at 
+					account.name as owner_name, account.uid, territory.build_rights, territory.moderators, territory.created_at, territory.last_paid_at 
 
 					FROM territory, account 
 					WHERE (territory.owner_uid = account.uid OR territory.build_rights LIKE '%$uid%' OR territory.moderators LIKE '%$uid%')
@@ -324,7 +324,7 @@ else
                 }
 
                 $created_at = $row3->created_at;
-                $last_payed_at = $row3->last_payed_at;
+                $last_paid_at = $row3->last_paid_at;
 
                 $build_rights = $row3->build_rights;
                 $build_rights = str_replace('[', "", $build_rights);
@@ -355,7 +355,7 @@ else
                 . '<td><a href="http://steamcommunity.com/profiles/' . $steam64id . '" target=_blank>' . $owner_name . '</a></td>'
                 . '<td>' . $territoryModerators . '</td>'
                 . '<td>' . $created_at . '</td>'
-                . '<td>' . $last_payed_at . '</td>'
+                . '<td>' . $last_paid_at . '</td>'
                 . '<td>' . $territoryBuilders . '</td>'
                 . '</tr>';
             }
@@ -396,7 +396,7 @@ else
                 $inGameCoords = substr($position_x, 0, 3) . substr($position_y, 0, 3);
                 $pin_code = $row2->pin_code;
                 $spawned_at = $row2->spawned_at;
-                $last_updated = $row2->last_accessed;
+                $last_updated_at = $row2->last_updated_at;
                 $contents = "Items: " . $row2->cargo_items . "<hr>";
                 $contents .= "Magazines: " . $row2->cargo_magazines . "<hr>";
                 $contents .= "Weapons: " . $row2->cargo_weapons . "<hr>";
@@ -406,7 +406,7 @@ else
                 . '<td valign=top>' . $pin_code . '</td>'
                 . '<td valign=top style="width:600px;">' . $contents . '</td>'
                 . '<td valign=top>' . $spawned_at . '</td>'
-                . '<td valign=top>' . $last_updated . '</td>'
+                . '<td valign=top>' . $last_updated_at . '</td>'
                 . '</tr>';
             }
             echo "</table>";

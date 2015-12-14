@@ -40,11 +40,12 @@
 		$result2 = mysqli_query($db_local, $sql2);
 		if(mysqli_num_rows($result) <> 0) // Found a record
 		{		
-			$Records = "INSERT INTO territory (owner_uid, name, position_x, position_y, position_z, radius, level, flag_texture, flag_stolen, flag_stolen_by_uid, flag_stolen_at, flag_steal_message, created_at, last_payed_at, build_rights, moderators) VALUES ";
+			$Records = "INSERT INTO territory (id, owner_uid, name, position_x, position_y, position_z, radius, level, flag_texture, flag_stolen, flag_stolen_by_uid, flag_stolen_at, flag_steal_message, created_at, last_paid_at, build_rights, moderators) VALUES ";
 		
 			while($row2 = mysqli_fetch_object($result2))
 			{
-				$owner_uid = $row2->owner_uid;
+				$id = $row2->id;
+                                $owner_uid = $row2->owner_uid;
 				$name = $row2->name;
 				$position_x = $row2->position_x;
 				$position_y = $row2->position_y;
@@ -65,7 +66,7 @@
 				
 				$flag_steal_message = $row2->flag_steal_message;
 				$created_at = $row2->created_at;
-				$last_payed_at = $row2->last_payed_at;
+				$last_paid_at = $row2->last_paid_at;
 				$build_rights = $row2->build_rights;
 				$moderators = $row2->moderators;				
 				
@@ -73,7 +74,7 @@
 				$territoryY = $position_y;
 				$territoryRadius = $radius;
 				
-				$Records .= " ('$owner_uid', '$name', $position_x, $position_y, $position_z, $radius, $level, '$flag_texture', $flag_stolen, '$flag_stolen_by_uid', $flag_stolen_at, '$flag_steal_message', '$created_at', now(), '$build_rights', '$moderators'),";
+				$Records .= " ('$id','$owner_uid', '$name', $position_x, $position_y, $position_z, $radius, $level, '$flag_texture', $flag_stolen, '$flag_stolen_by_uid', $flag_stolen_at, '$flag_steal_message', '$created_at', now(), '$build_rights', '$moderators'),";
 			}
 			$Records = rtrim($Records, ",");
 			$Records .= ";<br><br>";
@@ -85,19 +86,19 @@
 		}		
 		
 		// Export the constructions
-		$sql2 = "SELECT * FROM construction";
+		$sql2 = "SELECT * FROM construction WHERE territory_id = '$id'";
 		$result2 = mysqli_query($db_local, $sql2);
 		$constructionCount = 0;
 		if(mysqli_num_rows($result2) <> 0) // Found a record
 		{		
-			$Records = "INSERT INTO construction (class, account_uid, spawned_at, maintained_at, position_x, position_y, position_z, direction_x, direction_y, direction_z, up_x, up_y, up_z, is_locked, pin_code) VALUES ";
+			$Records = "INSERT INTO construction (class, account_uid, spawned_at, last_updated_at, position_x, position_y, position_z, direction_x, direction_y, direction_z, up_x, up_y, up_z, is_locked, pin_code,territory_id) VALUES ";
 		
 			while($row2 = mysqli_fetch_object($result2))
 			{
 				$class = $row2->class;
 				$account_uid = $row2->account_uid;
 				$spawned_at = $row2->spawned_at;
-				$maintained_at = $row2->maintained_at;
+				$last_updated_at = $row2->last_updated_at;
 				$position_x = $row2->position_x;
 				$position_y = $row2->position_y;
 				$position_z = $row2->position_z;
@@ -109,14 +110,8 @@
 				$up_z = $row2->up_z;
 				$is_locked = $row2->is_locked;
 				$pin_code = $row2->pin_code;
-				
-				if ((($position_x-$territoryX)**2 + ($position_y-$territoryY)**2 <= $territoryRadius**2))
-				{
-					$Records .= " ('$class', '$account_uid', '$spawned_at', now(), $position_x, $position_y, $position_z, $direction_x, $direction_y, $direction_z, $up_x, $up_y, $up_z, $is_locked, '$pin_code'),<br>";
-					$constructionCount = $constructionCount + 1;
-				}				
-				
-				
+				$Records .= " ('$class', '$account_uid', '$spawned_at', now(), $position_x, $position_y, $position_z, $direction_x, $direction_y, $direction_z, $up_x, $up_y, $up_z, $is_locked, '$pin_code','$id'),<br>";
+				$constructionCount = $constructionCount + 1;	
 			}
 			$Records = rtrim($Records, ",");
 			$Records .= ";";
