@@ -446,13 +446,13 @@ else
                 $inGameCoords = substr($position_x, 0, 3) . substr($position_y, 0, 3);
                 $pin_code = $row2->pin_code;
                 $spawned_at = $row2->spawned_at;
-                if (!isset($row2->last_updated))
+                if (!isset($row2->last_updated_at))
                 {
                     $last_updated = "n/a";
                 }
                 else
                 {
-                    $last_updated = $row2->last_updated;
+                    $last_updated = $row2->last_updated_at;
                 }
                 $contents = "Items: " . $row2->cargo_items . "<hr>";
                 $contents .= "Magazines: " . $row2->cargo_magazines . "<hr>";
