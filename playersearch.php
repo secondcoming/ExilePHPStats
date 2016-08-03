@@ -1,5 +1,5 @@
 <?php
-
+date_default_timezone_set('Europe/London');
 $PageTitle = "Exile Player Search:";
 $path = dirname($_SERVER['PHP_SELF']);
 include 'includes/header.php';
@@ -32,8 +32,8 @@ if ((!isset($_POST['searchfield']) || $_POST['searchfield'] == '') && !isset($_G
     echo '
                 </select>
                 <select name="searchtype">                 
-                  <option value="name" selected>Name</option>
-				  <option value="uid">Steam64id</option>
+                    <option value="name">Name</option>
+                    <option value="uid" selected>SteamID64</option>
                 </select>
                 <input type="text" name="searchfield" size=45 id="textfield"></input>
                 <input type="hidden" name="submitok" value="true">
@@ -101,15 +101,7 @@ else
     if ($SearchType == 'name')
     {
         $Searchfield = strtolower($Searchfield);
-
-        if ($UseAccountLog == TRUE)
-        {
-            $sql = "SELECT account.uid,account.name, account.money, account.score, account.kills,account. deaths, account.first_connect_at,account.last_connect_at, account.last_disconnect_at, account.total_connections,account_log.id FROM account LEFT JOIN account_log ON account_log.uid = account.uid WHERE LOWER(account_log.name) LIKE '%$Searchfield%' OR LOWER(account_log.old_name) LIKE '%$Searchfield%' OR LOWER(account.name) LIKE '%$Searchfield%' ORDER BY name";
-        }
-        else
-        {
-            $sql = "SELECT * FROM account WHERE LOWER(account.name) LIKE '%$Searchfield%' ORDER BY name";
-        }
+        $sql = "SELECT * FROM account WHERE LOWER(account.name) LIKE '%$Searchfield%' ORDER BY name";
     }
     elseif ($SearchType == 'uid')
     {
@@ -159,16 +151,17 @@ else
                             <td width=120 $align1>Last&nbsp;Connected</td>
                             <td width=120 $align1>Last&nbsp;Disconnect</td>
                             <td width=120 $align1>Connections</td>
-							<td width=85 $align1></td>
+                            <td width=85 $align1></td>
                     </tr>";
             // Display Account
             $uid = $row->uid;
             $steam64id = '<a href="http://steamcommunity.com/profiles/' . $uid . '" target=_blank>' . $uid . '</a> ';
             $name = $row->name;
-            $poptabs = $row->money;
+            $poptabs = $row->locker;
             $respect = $row->score;
             $kills = $row->kills;
             $deaths = $row->deaths;
+            $clan = $row->clan_id;
             $first_connect_at = $row->first_connect_at;
             $last_connect_at = $row->last_connect_at;
 
@@ -188,12 +181,12 @@ else
 			$result4 = mysqli_query($db_local, $sql4);
 
 			if (mysqli_num_rows($result4) > 0)
-            {
-				$options = "<a href=\"playeredit.php?action=edit&uid=$uid&server=$Server\"><img src=\"images\edit.png\" title=\"edit pop tabs and respect\"></a> <a href=\"playeredit.php?action=delete&uid=$uid&server=$Server\"><img src=\"images\delete.png\" title=\"delete the character\"></a>";
+                        {
+				$options = "<a href=\"playeredit.php?action=edit&uid=$uid&server=$Server\"><img src=\"images/edit.png\" title=\"edit pop tabs and respect\"></a> <a href=\"playeredit.php?action=delete&uid=$uid&server=$Server\"><img src=\"images/delete.png\" title=\"delete the character\"></a>";
 			}
 			else
 			{
-				$options = "<a href=\"playeredit.php?action=edit&uid=$uid&server=$Server\"><img src=\"images\edit.png\" title=\"edit pop tabs and respect\"></a>";
+				$options = "<a href=\"playeredit.php?action=edit&uid=$uid&server=$Server\"><img src=\"images/edit.png\" title=\"edit pop tabs and respect\"></a>";
 			}
 
             echo "<tr style=\"background-color:#000;\">
@@ -210,47 +203,49 @@ else
 			<td style=\"width:200px;text-align:left;padding:8px;\">$options</td>
 			</tr></table>";
 
-            if ($UseAccountLog && isset($row->id) && $row->id != '')
+            
+
+
+            if($clan <> '')
             {
-                $sql3 = "SELECT * FROM account_log WHERE uid = '$uid' ORDER BY connected DESC";
+                $sql3 = "SELECT clan.name as clan_name, clan.leader_uid, clan.created_at, account.name as player_name, account.uid,
+                        account.locker, account.score, account.last_connect_at
+                        FROM account,clan WHERE account.clan_id = '$clan' AND account.clan_id = clan.id ORDER BY account.name";
                 $result3 = mysqli_query($db_local, $sql3);
+                
+                echo "<hr><h2>Clan Details for $name</h2><hr>";
+                echo "<table cellspacing=1 width=100%>
+                        <tr>
+                            <td width=200 $align1>Clan</td>
+                            <td width=250 $align1>Player</td>
+                            <td width=250 $align1>Steam Profile</td>
+                            <td width=250 $align1>Poptabs</td>
+                            <td width=75 $align1>Respect</td>
+                            <td width=120 $align1>Last Logged On</td>
+                        </tr>";
+                while ($row3 = mysqli_fetch_object($result3))
+                {                  
+                    $clanName       = $row3->clan_name;
+                    $playerName     = $row3->player_name;
+                    $playerUID      = $row3->uid;
+                    $playerLastOn   = $row3->last_connect_at;
+                    $steamID64      = '<a href="http://steamcommunity.com/profiles/' . $playerUID . '" target=_blank>'.$playerUID.'</a> ';
+                    $playerLink     = '<a href="playersearch.php?server='.$servername.'&searchtype=uid&searchfield=' . $playerUID . '">'.$playerName.'</a>';
+                    $playerPoptabs  = $row3->locker;
+                    $playerRespect  = $row3->score;
 
+                    echo "<tr style=\"background-color:#000;\">
+                            <td $align1>$clanName</td>
+                            <td $align1>$playerLink</td>
+                            <td $align1>$steamID64</td>
+                            <td $align1>$playerPoptabs</td>
+                            <td $align1>$playerRespect</td>
+                            <td $align1>$playerLastOn</td>
+                        </tr>";
 
-                if (mysqli_num_rows($result3) > 0)
-                {
-                    echo "<hr><h2>Account log for $name</h2><hr>";
-                    echo "<table cellspacing=1 width=100%><tr>
-							<td width=200 $align1>steam64id</td>
-							<td width=250 $align1>new&nbsp;name</td>
-							<td width=250 $align1>old&nbsp;name</td>
-							<td width=75 $align1>pop&nbsp;tabs</td>
-							<td width=75 $align1>Respect</td>
-							<td width=120 $align1>Name&nbsp;Changed</td>
-						</tr>";
-                    while ($row3 = mysqli_fetch_object($result3))
-                    {
-                        $steam64id_old = '<a href="http://steamcommunity.com/profiles/' . $uid . '" target=_blank>' . $uid . '</a> ';
-                        $name_new = $row3->name;
-                        $name_old = $row3->old_name;
-                        $poptabs_old = $row3->money;
-                        $respect_old = $row3->score;
-                        $name_changed_at = $row3->connected;
-
-                        echo "<tr style=\"background-color:#000;\">
-								<td $align1>$steam64id_old</td>
-								<td $align1>$name_new</td>
-								<td $align1>$name_old</td>
-								<td $align1>$poptabs_old</td>
-								<td $align1>$respect_old</td>
-								<td $align1>$name_changed_at</td>
-							</tr>";
-                    }
-                    echo "</table>";
+                    
                 }
-                else
-                {
-                    echo "<hr><h2>This player has no name history</h2><hr>";
-                }
+                echo "</table>";
             }
 
 
@@ -267,7 +262,7 @@ else
 
             if (mysqli_num_rows($result3) > 0)
             {
-                echo "<hr><h2>Territories for $name</h2><hr><a href=\"export.php?uid=$uid&server=$Server\" target=_blank>Export Player Territories and Constructions</a><hr>";
+                echo "<hr><h2>Territories for $name</h2><hr>";
                 echo '
 				<table class="tftable">
 				<tr>
@@ -313,7 +308,6 @@ else
                     if ($moderator <> "")
                     {
                         $sql4 = "SELECT name FROM account WHERE uid = '$moderator'";
-                        //echo "<hr>$sql2<hr>";
                         $result4 = mysqli_query($db_local, $sql4);
                         $row4 = mysqli_fetch_object($result4);
 
@@ -337,7 +331,6 @@ else
                     if ($builder <> "")
                     {
                         $sql4 = "SELECT name FROM account WHERE uid = '$builder'";
-                        //echo "<hr>$sql4<hr>";
                         $result4 = mysqli_query($db_local, $sql4);
                         $row4 = mysqli_fetch_object($result4);
 
@@ -383,7 +376,7 @@ else
             }
             else
             {
-                //echo "<hr><h2>This player has no containers</h2><hr>";
+                echo "<hr><h2>This player has no containers</h2><hr>";
             }
 
             while ($row2 = mysqli_fetch_object($result2))
@@ -433,7 +426,7 @@ else
             }
             else
             {
-                //echo "<hr><h2>This player has no vehicles</h2><hr>";
+                echo "<hr><h2>This player has no vehicles</h2><hr>";
             }
 
             while ($row2 = mysqli_fetch_object($result2))
@@ -467,6 +460,7 @@ else
                 . '</tr>';
             }
             echo "</table>";
+  
         }
         else
         {

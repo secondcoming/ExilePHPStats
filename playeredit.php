@@ -1,5 +1,5 @@
 <?php
-
+date_default_timezone_set('Europe/London');
 $PageTitle = "Exile Player Edit:";
 $path = dirname($_SERVER['PHP_SELF']);
 include 'includes/header.php';
@@ -24,9 +24,6 @@ if ((isset($_GET['action']) && isset($_GET['uid']) && isset($_GET['server'])) ||
 		$uid = $_POST['uid'];
 		$server = $_POST['server'];			
 	}
-	
-	//echo "<hr>action: $action   uid: $uid    server: $server<hr>";
-
 
 	foreach ($ServerList as $ServerToCheck)
 	{
@@ -81,7 +78,6 @@ if ((isset($_GET['action']) && isset($_GET['uid']) && isset($_GET['server'])) ||
 	elseif($action == 'deleteconfirmed')
 	{
 		$sql = "DELETE FROM player WHERE account_uid = '$uid '";
-		//echo "<hr>$sql<hr>";
 		$result = mysqli_query($db_local, $sql);
 		$msg = "Player deleted";
 		$url = "playersearch.php?server=$server&searchtype=uid&searchfield=$uid";
@@ -96,7 +92,7 @@ if ((isset($_GET['action']) && isset($_GET['uid']) && isset($_GET['server'])) ||
 		
 		$steam64id = '<a href="http://steamcommunity.com/profiles/' . $uid . '" target=_blank>' . $uid . '</a>';
 		$name = $row->name;
-		$poptabs = $row->money;
+		$poptabs = $row->locker;
 		$respect = $row->score;		
 		
 		echo '<div>
@@ -139,8 +135,7 @@ if ((isset($_GET['action']) && isset($_GET['uid']) && isset($_GET['server'])) ||
 		$newPoptabs = $_POST['poptabs'];
 		$newRespect = $_POST['respect'];
 		
-		$sql = "UPDATE account SET money = '$newPoptabs', score = '$newRespect' WHERE uid = '$uidToUpdate'";
-		//echo "<hr>$sql<hr>";
+		$sql = "UPDATE account SET locker = '$newPoptabs', score = '$newRespect' WHERE uid = '$uidToUpdate'";
 		$result = mysqli_query($db_local, $sql);
 		$msg = "Updated pop tab and respect levels";
 		$url = "playersearch.php?server=$server&searchtype=uid&searchfield=$uid";

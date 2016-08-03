@@ -1,7 +1,3 @@
-AddType application/x-httpd-php .css
-AddType application/x-httpd-php .js
-AddType application/x-httpd-php .xml
-
 <Files .htaccess>
 order allow,deny
 deny from all

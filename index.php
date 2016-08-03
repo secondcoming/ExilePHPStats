@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('Europe/London');
 $PageTitle = "Exile Server Stats:";
 $path = dirname($_SERVER['PHP_SELF']);
 include 'includes/header.php';
@@ -13,8 +14,7 @@ foreach ($ServerList as $Server)
 	$dbpass = $ServerDetails[3];
 	$servername = ucwords($ServerDetails[4]);
 	$dbport = $ServerDetails[5];
-	displayServerDetails($dbhost,$dbname,$dbuser,$dbpass,$servername,$dbport);
-	
+	displayServerDetails($dbhost,$dbname,$dbuser,$dbpass,$servername,$dbport);	
 }
 ?>
 
