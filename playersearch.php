@@ -141,7 +141,12 @@ else
         if (isset($row->uid) && $row->uid <> '')
         {
             echo "<table cellspacing=1 width=100%><tr>
-                            <td width=150 $align1>steam64id</td>
+                            <td width=150 $align1>steamID64</td>";
+			if ( PHP_INT_MAX > 2147483647 ) 
+			{ 
+				echo "<td width=150 $align1>guid</td>"; 
+			}							
+			echo "			
                             <td width=250 $align1>name</td>
                             <td width=75 $align1>pop&nbsp;tabs</td>
                             <td width=75 $align1>Respect</td>
@@ -155,8 +160,9 @@ else
                     </tr>";
             // Display Account
             $uid = $row->uid;
-            $steam64id = '<a href="http://steamcommunity.com/profiles/' . $uid . '" target=_blank>' . $uid . '</a> ';
-            $name = $row->name;
+            $steamID64 = '<a href="http://steamcommunity.com/profiles/' . $uid . '" target=_blank>' . $uid . '</a> ';
+            $guid = getGUID($uid);
+			$name = $row->name;
             $poptabs = $row->locker;
             $respect = $row->score;
             $kills = $row->kills;
@@ -190,7 +196,12 @@ else
 			}
 
             echo "<tr style=\"background-color:#000;\">
-			<td $align1>$steam64id</td>
+			<td $align1>$steamID64</td>";			
+			if ( PHP_INT_MAX > 2147483647 ) 
+			{ 
+				echo "<td $align1>$guid</td>"; 
+			}
+			echo "		
 			<td $align1>$name</td>
 			<td $align1>$poptabs</td>
 			<td $align1>$respect</td>
