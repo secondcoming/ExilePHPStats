@@ -7,7 +7,7 @@ include 'includes/config.php';
 include 'includes/functions.php';
 
 $sql = "SELECT * FROM infistar_logs ORDER BY time DESC LIMIT 1000";
-$result = mysqli_query($db_traders, $sql);
+$result = mysqli_query($db_local, $sql);
 
 if (mysqli_num_rows($result) > 0)
 {
