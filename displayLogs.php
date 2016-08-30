@@ -26,9 +26,9 @@ else
 
 while ($row = mysqli_fetch_object($result))
 {
-    $logname    = $row3->logname;
-    $logentry   = $row3->logentry;
-    $time       = $row3->time;
+    $logname    = $row->logname;
+    $logentry   = $row->logentry;
+    $time       = $row->time;
 
     echo '<tr>'
     . '<td valign=top>' . $logname . '</td>'
