@@ -1,3 +1,5 @@
+https://img.shields.io/badge/Exile-1.0.1%20Sweet%20Potato-C72651.svg
+
 # ExilePHPStats
 
 For more info:
