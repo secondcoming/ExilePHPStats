@@ -141,12 +141,8 @@ else
         if (isset($row->uid) && $row->uid <> '')
         {
             echo "<table cellspacing=1 width=100%><tr>
-                            <td width=150 $align1>steamID64</td>";
-			if ( PHP_INT_MAX > 2147483647 ) 
-			{ 
-				echo "<td width=150 $align1>guid</td>"; 
-			}							
-			echo "			
+                            <td width=150 $align1>steamID64</td>
+                            <td width=150 $align1>guid</td>
                             <td width=250 $align1>name</td>
                             <td width=75 $align1>pop&nbsp;tabs</td>
                             <td width=75 $align1>Respect</td>
@@ -162,7 +158,7 @@ else
             $uid = $row->uid;
             $steamID64 = '<a href="http://steamcommunity.com/profiles/' . $uid . '" target=_blank>' . $uid . '</a> ';
             $guid = getGUID($uid);
-			$name = $row->name;
+            $name = $row->name;
             $poptabs = $row->locker;
             $respect = $row->score;
             $kills = $row->kills;
@@ -196,12 +192,8 @@ else
 			}
 
             echo "<tr style=\"background-color:#000;\">
-			<td $align1>$steamID64</td>";			
-			if ( PHP_INT_MAX > 2147483647 ) 
-			{ 
-				echo "<td $align1>$guid</td>"; 
-			}
-			echo "		
+			<td $align1>$steamID64</td>
+                        <td $align1>$guid</td>
 			<td $align1>$name</td>
 			<td $align1>$poptabs</td>
 			<td $align1>$respect</td>
@@ -241,7 +233,7 @@ else
                     $playerUID      = $row3->uid;
                     $playerLastOn   = $row3->last_connect_at;
                     $steamID64      = '<a href="http://steamcommunity.com/profiles/' . $playerUID . '" target=_blank>'.$playerUID.'</a> ';
-                    $playerLink     = '<a href="playersearch.php?server='.$servername.'&searchtype=uid&searchfield=' . $playerUID . '">'.$playerName.'</a>';
+                    $playerLink     = '<a href="playersearch.php?server='.$Server.'&searchtype=uid&searchfield=' . $playerUID . '">'.$playerName.'</a>';
                     $playerPoptabs  = $row3->locker;
                     $playerRespect  = $row3->score;
 
@@ -273,7 +265,7 @@ else
 
             if (mysqli_num_rows($result3) > 0)
             {
-                echo "<hr><h2>Territories for $name</h2><hr>";
+                echo "<hr><h2>Territories for $name</h2><hr><a href=\"export.php?uid=$uid&server=$Server\" target=_blank>Export Player Territories and Constructions</a><hr>";
                 echo '
 				<table class="tftable">
 				<tr>
@@ -319,6 +311,7 @@ else
                     if ($moderator <> "")
                     {
                         $sql4 = "SELECT name FROM account WHERE uid = '$moderator'";
+                        //echo "<hr>$sql2<hr>";
                         $result4 = mysqli_query($db_local, $sql4);
                         $row4 = mysqli_fetch_object($result4);
 
@@ -342,6 +335,7 @@ else
                     if ($builder <> "")
                     {
                         $sql4 = "SELECT name FROM account WHERE uid = '$builder'";
+                        //echo "<hr>$sql4<hr>";
                         $result4 = mysqli_query($db_local, $sql4);
                         $row4 = mysqli_fetch_object($result4);
 
@@ -387,7 +381,7 @@ else
             }
             else
             {
-                echo "<hr><h2>This player has no containers</h2><hr>";
+                //echo "<hr><h2>This player has no containers</h2><hr>";
             }
 
             while ($row2 = mysqli_fetch_object($result2))
@@ -437,7 +431,7 @@ else
             }
             else
             {
-                echo "<hr><h2>This player has no vehicles</h2><hr>";
+                //echo "<hr><h2>This player has no vehicles</h2><hr>";
             }
 
             while ($row2 = mysqli_fetch_object($result2))
@@ -471,7 +465,51 @@ else
                 . '</tr>';
             }
             echo "</table>";
-  
+            
+            
+            // Display trader history
+            $sql3 = "SELECT * FROM trader_log WHERE steamid64 = '$uid' AND time_sold > NOW() - INTERVAL 30 DAY
+                    ORDER BY time_sold DESC";
+            $result3 = mysqli_query($db_traders, $sql3);
+
+            if (mysqli_num_rows($result3) > 0)
+            {
+                echo "<hr><h2>Items sold by $name (last 30 days)</h2><hr>";
+                echo '<table class="tftable" border="1"">
+		<tr>
+		<td style="width:150px;">When</td>
+                <td style="width:150px;">Server</td>
+                <td>Items</td>
+                <td style="width:50px;">Poptabs</td>
+                <td style="width:50px;">Respect</td>
+                </tr>';
+            }
+            else
+            {
+                echo "<hr><h2>This player has no trader history</h2><hr>";
+            }
+
+            while ($row3 = mysqli_fetch_object($result3))
+            {
+                $time_sold = $row3->time_sold;
+                $server = $row3->servername;
+                $items_sold = str_replace('","','", "',$row3->items_sold);
+                $poptabs = $row3->poptabs;
+                $respect = $row3->respect;
+                echo '<tr>'
+                . '<td valign=top style="width:150px;">' . $time_sold . '</td>'
+                . '<td valign=top style="width:150px;">' . $server . '</td>'        
+                . '<td valign=top>' . $items_sold . '</td>'
+                . '<td valign=top align=right style="width:50px;">' . $poptabs . '</td>'
+                . '<td valign=top align=right style="width:50px;">' . $respect . '</td>'
+                . '</tr>';
+            }
+            echo "</table>";            
+            
+            
+            
+            
+            
         }
         else
         {
