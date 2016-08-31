@@ -11,3 +11,12 @@ This work is protected by [Creative Commons Attribution-NonCommercial-ShareAlike
 ### Donations:
 Anyone wishing to donate can do so here http://exileyorkshire.co.uk/
 All donations go towards coffee to keep me awake :)
+
+You need to use the following overrides to be able to log trader and recycle logs:
+ExileServer_system_trading_network_sellItemRequest.sqf
+ExileServer_system_trading_network_wasteDumpRequest.sqf
+
+Create a database called exile_logs and import the database extras/exile_logs.sql
+add the connection details to includes/config.php
+
+Either add a cron job to run the importLogs.php script or run it manually to read the trader and recycle logs in to the trader database
