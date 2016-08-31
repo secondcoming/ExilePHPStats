@@ -12,6 +12,7 @@ This work is protected by [Creative Commons Attribution-NonCommercial-ShareAlike
 Anyone wishing to donate can do so here http://exileyorkshire.co.uk/
 All donations go towards coffee to keep me awake :)
 
+### Extras:
 You need to use the following overrides to be able to log trader and recycle logs:
 ExileServer_system_trading_network_sellItemRequest.sqf
 ExileServer_system_trading_network_wasteDumpRequest.sqf
