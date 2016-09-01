@@ -67,15 +67,15 @@ if(isset($_POST['searchtype']))
   
   if($searchtype == 'dodgy')
   {
-      $logsToSearch = " WHERE logname LIKE '%DUPE%' OR logname LIKE '%KICK%' OR logname LIKE '%BAN%' OR logname LIKE '%SURVEILLANCE%' OR logname LIKE '%GOD%' AND logentry like '%$searchterm%' ";
+      $logsToSearch = " WHERE (logname LIKE '%DUPE%' OR logname LIKE '%KICK%' OR logname LIKE '%BAN%' OR logname LIKE '%SURVEILLANCE%' OR logname LIKE '%GOD%') AND logentry like '%$searchterm%' ";
   }
   elseif($searchtype == 'traders')
   {
-      $logsToSearch = " WHERE logname LIKE '%RECYCLE%' OR logname LIKE '%TRADER%' AND logentry like '%$searchterm%' ";
+      $logsToSearch = " WHERE (logname LIKE '%RECYCLE%' OR logname LIKE '%TRADER%') AND logentry like '%$searchterm%' ";
   }
   elseif($searchtype == 'performance')
   {
-      $logsToSearch = " WHERE logname LIKE '%PROCESSREPORTER%' OR logname LIKE '%TRADER%' AND logentry like '%$searchterm%' ";
+      $logsToSearch = " WHERE (logname LIKE '%PROCESSREPORTER%' OR logname LIKE '%TRADER%') AND logentry like '%$searchterm%' ";
   } 
   elseif($searchtype == 'all')
   {
@@ -88,7 +88,13 @@ if(isset($_POST['searchtype']))
 }
 else
 {
-      $logsToSearch = " WHERE logname LIKE '%DUPE%' OR logname LIKE '%KICK%' OR logname LIKE '%BAN%' OR logname LIKE '%SURVEILLANCE%' OR logname LIKE '%GOD%' AND logentry like '%$searchterm%' ";
+      $logsToSearch = " WHERE (logname LIKE '%DUPE%' 
+                        OR logname LIKE '%KICK%' 
+                        OR logname LIKE '%BAN%' 
+                        OR logname LIKE '%SURVEILLANCE%' 
+                        OR logname LIKE '%GOD%') 
+                        AND logentry like '%$searchterm%' 
+                        AND time > now() - INTERVAL 6 HOUR";
 }
 
 
@@ -108,7 +114,7 @@ foreach ($ServerList as $ServerToCheck)
             if(strtolower($servername) == strtolower($serverToSearch))
             {
                 $sql = "SELECT * 
-                        FROM infistar_logs 
+                        FROM infistar_logs                     
                         $logsToSearch 
                         ORDER BY time 
                         ASC 
@@ -198,7 +204,5 @@ foreach ($ServerList as $ServerToCheck)
 	
 	
 }
-
-
 
 ?>
